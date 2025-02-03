@@ -1,0 +1,17 @@
+com/businesselements/model/BusinessElement.class
+com/businesselements/service/BusinessElementService.class
+com/businesselements/repository/OwnerGroupRepository.class
+com/businesselements/model/DatabaseMapping.class
+com/businesselements/dto/BusinessElementDTO$CategoryDTO.class
+com/businesselements/repository/CategoryRepository.class
+com/businesselements/model/Category.class
+com/businesselements/dto/BusinessElementDTO.class
+com/businesselements/Application.class
+com/businesselements/controller/BusinessElementController.class
+com/businesselements/dto/BusinessElementDTO$DatabaseConfigDTO.class
+com/businesselements/repository/DatabaseConfigRepository.class
+com/businesselements/model/DatabaseConfig.class
+com/businesselements/dto/BusinessElementDTO$OwnerGroupDTO.class
+com/businesselements/dto/BusinessElementDTO$DatabaseMappingDTO.class
+com/businesselements/repository/BusinessElementRepository.class
+com/businesselements/model/OwnerGroup.class

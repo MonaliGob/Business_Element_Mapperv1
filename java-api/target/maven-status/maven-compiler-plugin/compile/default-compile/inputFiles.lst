@@ -1,0 +1,13 @@
+/home/runner/workspace/java-api/src/main/java/com/businesselements/service/BusinessElementService.java
+/home/runner/workspace/java-api/src/main/java/com/businesselements/model/Category.java
+/home/runner/workspace/java-api/src/main/java/com/businesselements/repository/BusinessElementRepository.java
+/home/runner/workspace/java-api/src/main/java/com/businesselements/dto/BusinessElementDTO.java
+/home/runner/workspace/java-api/src/main/java/com/businesselements/controller/BusinessElementController.java
+/home/runner/workspace/java-api/src/main/java/com/businesselements/repository/OwnerGroupRepository.java
+/home/runner/workspace/java-api/src/main/java/com/businesselements/Application.java
+/home/runner/workspace/java-api/src/main/java/com/businesselements/model/BusinessElement.java
+/home/runner/workspace/java-api/src/main/java/com/businesselements/repository/CategoryRepository.java
+/home/runner/workspace/java-api/src/main/java/com/businesselements/repository/DatabaseConfigRepository.java
+/home/runner/workspace/java-api/src/main/java/com/businesselements/model/DatabaseMapping.java
+/home/runner/workspace/java-api/src/main/java/com/businesselements/model/OwnerGroup.java
+/home/runner/workspace/java-api/src/main/java/com/businesselements/model/DatabaseConfig.java
