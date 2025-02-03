@@ -11,32 +11,10 @@ A comprehensive system for tracking, validating, and visualizing complex databas
 - 🏢 Detailed category and owner group integration
 - 📈 Version history tracking
 
-## Screenshots
+## Application Screenshot
 
-Here are some screenshots showcasing the key features of the application:
-
-### Dashboard Overview
 ![Dashboard Overview](./screenshots/dashboard.png)
 *Main dashboard showing business element statistics and Sankey diagram*
-
-### Business Elements Management
-![Business Elements](./screenshots/elements.png)
-*Business elements listing with filtering and management options*
-
-### Data Quality Rules
-![Data Quality Rules](./screenshots/rules.png)
-*Data quality rules configuration interface*
-
-### Database Mappings
-![Database Mappings](./screenshots/mappings.png)
-*Database mapping visualization and management*
-
-> Note: To add screenshots:
-> 1. Create a `screenshots` directory in the project root
-> 2. Save your screenshots with descriptive names (e.g., `dashboard.png`)
-> 3. Use PNG format for best quality and compatibility
-> 4. Recommended screenshot dimensions: 1920x1080 or 1366x768
-> 5. Keep file sizes under 500KB for better loading times
 
 ## Prerequisites
 
