@@ -1,0 +1,14 @@
+[run]
+source = server
+omit = 
+    */vite.ts
+    */test/*
+    */node_modules/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    pass
