@@ -77,24 +77,47 @@ export function registerRoutes(app: Express): Server {
   });
 
   app.post("/api/owner-groups", async (req, res) => {
+    // Check for existing group with same name (case insensitive)
+    const existingGroup = await db.query.ownerGroups.findFirst({
+      where: (groups, { sql }) => sql`LOWER(${groups.name}) = LOWER(${req.body.name})`
+    });
+
+    if (existingGroup) {
+      return res.status(400).json({ 
+        message: `An owner group with the name "${req.body.name}" already exists` 
+      });
+    }
+
     const newGroup = await db.insert(ownerGroups).values(req.body).returning();
     res.json(newGroup[0]);
   });
 
   app.patch("/api/owner-groups/:id", async (req, res) => {
     const { id } = req.params;
+
+    if (req.body.name) {
+      // Check for existing group with same name, excluding current group
+      const existingGroup = await db.query.ownerGroups.findFirst({
+        where: (groups, { sql, and, ne }) => 
+          and(
+            sql`LOWER(${groups.name}) = LOWER(${req.body.name})`,
+            ne(groups.id, parseInt(id))
+          )
+      });
+
+      if (existingGroup) {
+        return res.status(400).json({ 
+          message: `An owner group with the name "${req.body.name}" already exists` 
+        });
+      }
+    }
+
     const updated = await db
       .update(ownerGroups)
       .set({ ...req.body, updatedAt: new Date() })
       .where(eq(ownerGroups.id, parseInt(id)))
       .returning();
     res.json(updated[0]);
-  });
-
-  app.delete("/api/owner-groups/:id", async (req, res) => {
-    const { id } = req.params;
-    await db.delete(ownerGroups).where(eq(ownerGroups.id, parseInt(id)));
-    res.status(204).end();
   });
 
   // Existing routes...
@@ -207,8 +230,8 @@ export function registerRoutes(app: Express): Server {
     await db.delete(databaseMappings).where(eq(databaseMappings.id, parseInt(id)));
     res.status(204).end();
   });
-   // Data Quality Rules
-   app.get("/api/elements/:id/rules", async (req, res) => {
+  // Data Quality Rules
+  app.get("/api/elements/:id/rules", async (req, res) => {
     const { id } = req.params;
     const rules = await db.query.dataQualityRules.findMany({
       where: eq(dataQualityRules.elementId, parseInt(id)),
@@ -243,7 +266,7 @@ export function registerRoutes(app: Express): Server {
     await db.delete(dataQualityRules).where(eq(dataQualityRules.id, parseInt(id)));
     res.status(204).end();
   });
-  
+
 
   return httpServer;
 }
