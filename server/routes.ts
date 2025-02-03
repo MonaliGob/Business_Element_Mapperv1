@@ -50,12 +50,41 @@ export function registerRoutes(app: Express): Server {
   });
 
   app.post("/api/categories", async (req, res) => {
+    // Check for existing category with same name (case insensitive)
+    const existingCategory = await db.query.categories.findFirst({
+      where: (categories, { sql }) => sql`LOWER(${categories.name}) = LOWER(${req.body.name})`
+    });
+
+    if (existingCategory) {
+      return res.status(400).json({ 
+        message: `A category with the name "${req.body.name}" already exists` 
+      });
+    }
+
     const newCategory = await db.insert(categories).values(req.body).returning();
     res.json(newCategory[0]);
   });
 
   app.patch("/api/categories/:id", async (req, res) => {
     const { id } = req.params;
+
+    if (req.body.name) {
+      // Check for existing category with same name, excluding current category
+      const existingCategory = await db.query.categories.findFirst({
+        where: (categories, { sql, and, ne }) => 
+          and(
+            sql`LOWER(${categories.name}) = LOWER(${req.body.name})`,
+            ne(categories.id, parseInt(id))
+          )
+      });
+
+      if (existingCategory) {
+        return res.status(400).json({ 
+          message: `A category with the name "${req.body.name}" already exists` 
+        });
+      }
+    }
+
     const updated = await db
       .update(categories)
       .set({ ...req.body, updatedAt: new Date() })
