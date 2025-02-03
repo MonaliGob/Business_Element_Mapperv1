@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import {
   Table,
   TableBody,
@@ -22,7 +23,8 @@ import type { OwnerGroup } from "@db/schema";
 
 export default function OwnerGroupsPage() {
   const [open, setOpen] = useState(false);
-  const { data: groups } = useQuery<OwnerGroup[]>({ 
+  const { toast } = useToast();
+  const { data: groups, isLoading } = useQuery<OwnerGroup[]>({ 
     queryKey: ["/api/owner-groups"] 
   });
 
@@ -34,8 +36,23 @@ export default function OwnerGroupsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/owner-groups"] });
       setOpen(false);
+      toast({
+        title: "Success",
+        description: "Owner group created successfully",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50/50 to-white p-8">
@@ -60,6 +77,7 @@ export default function OwnerGroupsPage() {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
+              <TableHead>Created At</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -67,6 +85,7 @@ export default function OwnerGroupsPage() {
               <TableRow key={group.id}>
                 <TableCell>{group.name}</TableCell>
                 <TableCell>{group.description}</TableCell>
+                <TableCell>{new Date(group.createdAt).toLocaleDateString()}</TableCell>
               </TableRow>
             ))}
           </TableBody>

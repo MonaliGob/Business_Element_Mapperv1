@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { NewOwnerGroup } from "@db/schema";
+import type { NewOwnerGroup } from "@db/schema";
 
 const ownerGroupSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -27,9 +27,9 @@ type OwnerGroupFormProps = {
 export function OwnerGroupForm({ onSubmit, defaultValues }: OwnerGroupFormProps) {
   const form = useForm<NewOwnerGroup>({
     resolver: zodResolver(ownerGroupSchema),
-    defaultValues: defaultValues || {
-      name: "",
-      description: "",
+    defaultValues: {
+      name: defaultValues?.name || "",
+      description: defaultValues?.description || "",
     },
   });
 
@@ -43,7 +43,7 @@ export function OwnerGroupForm({ onSubmit, defaultValues }: OwnerGroupFormProps)
             <FormItem>
               <FormLabel>Group Name</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} placeholder="Enter group name" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -57,7 +57,11 @@ export function OwnerGroupForm({ onSubmit, defaultValues }: OwnerGroupFormProps)
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea {...field} />
+                <Textarea 
+                  {...field} 
+                  value={field.value || ""} 
+                  placeholder="Enter group description (optional)"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
