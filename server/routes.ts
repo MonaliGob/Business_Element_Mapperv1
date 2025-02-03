@@ -149,17 +149,7 @@ export function registerRoutes(app: Express): Server {
     res.json(updated[0]);
   });
 
-  // Existing routes...
-  app.post("/api/seed", async (req, res) => {
-    try {
-      await seedDatabase();
-      res.json({ message: "Database seeded successfully" });
-    } catch (error) {
-      console.error("Seeding error:", error);
-      res.status(500).json({ message: "Error seeding database" });
-    }
-  });
-
+  // Business Elements
   app.get("/api/elements", async (req, res) => {
     const elements = await db.query.businessElements.findMany({
       with: {
@@ -177,36 +167,42 @@ export function registerRoutes(app: Express): Server {
     res.json(elements);
   });
 
-  app.get("/api/elements/:id", async (req, res) => {
-    const { id } = req.params;
-    const element = await db.query.businessElements.findFirst({
-      where: eq(businessElements.id, parseInt(id)),
-      with: {
-        category: true,
-        ownerGroup: true,
-        definitions: true,
-        mappings: {
-          with: {
-            databaseConfig: true,
-          },
-        },
-        qualityRules: true,
-      },
-    });
-    if (!element) {
-      res.status(404).json({ message: "Element not found" });
-      return;
-    }
-    res.json(element);
-  });
-
   app.post("/api/elements", async (req, res) => {
+    // Check for existing element with same name (case insensitive)
+    const existingElement = await db.query.businessElements.findFirst({
+      where: (elements, { sql }) => sql`LOWER(${elements.name}) = LOWER(${req.body.name})`
+    });
+
+    if (existingElement) {
+      return res.status(400).json({ 
+        message: `A business element with the name "${req.body.name}" already exists` 
+      });
+    }
+
     const newElement = await db.insert(businessElements).values(req.body).returning();
     res.json(newElement[0]);
   });
 
   app.patch("/api/elements/:id", async (req, res) => {
     const { id } = req.params;
+
+    if (req.body.name) {
+      // Check for existing element with same name, excluding current element
+      const existingElement = await db.query.businessElements.findFirst({
+        where: (elements, { sql, and, ne }) => 
+          and(
+            sql`LOWER(${elements.name}) = LOWER(${req.body.name})`,
+            ne(elements.id, parseInt(id))
+          )
+      });
+
+      if (existingElement) {
+        return res.status(400).json({ 
+          message: `A business element with the name "${req.body.name}" already exists` 
+        });
+      }
+    }
+
     const updated = await db
       .update(businessElements)
       .set({ ...req.body, updatedAt: new Date() })
@@ -296,6 +292,16 @@ export function registerRoutes(app: Express): Server {
     res.status(204).end();
   });
 
+
+  app.post("/api/seed", async (req, res) => {
+    try {
+      await seedDatabase();
+      res.json({ message: "Database seeded successfully" });
+    } catch (error) {
+      console.error("Seeding error:", error);
+      res.status(500).json({ message: "Error seeding database" });
+    }
+  });
 
   return httpServer;
 }
