@@ -39,14 +39,19 @@ export default function OwnerGroupsPage() {
 
   const createMutation = useMutation({
     mutationFn: async (data: Omit<OwnerGroup, 'id'>) => {
-      const res = await apiRequest("POST", "/api/owner-groups", data);
-      if (!res.ok) {
-        const error = await res.json();
-        setDuplicateGroupName(data.name);
-        setShowDuplicateAlert(true);
+      try {
+        const res = await apiRequest("POST", "/api/owner-groups", data);
+        if (!res.ok) {
+          const error = await res.json();
+          setDuplicateGroupName(data.name);
+          setShowDuplicateAlert(true);
+          return null;
+        }
+        return await res.json();
+      } catch (error) {
+        console.error('Failed to create owner group:', error);
         return null;
       }
-      return await res.json();
     },
     onSuccess: (data) => {
       // Only close dialog and refresh data if creation was successful
