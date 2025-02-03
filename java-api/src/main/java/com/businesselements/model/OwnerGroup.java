@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class OwnerGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "bigint")
     private Long id;
 
     @Column(nullable = false)

@@ -10,11 +10,14 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
-  
+
 server:
-  port: 5000
+  port: 8080
+  servlet:
+    context-path: /api
 
 logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.businesselements: DEBUG

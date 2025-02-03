@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class DatabaseMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "bigint")
     private Long id;
 
     @ManyToOne
