@@ -46,8 +46,9 @@ export default function OwnerGroupsPage() {
       });
     },
     onError: (error: Error) => {
+      // Keep dialog open on error
       toast({
-        title: "Error",
+        title: "Owner Group Already Exists",
         description: error.message,
         variant: "destructive",
       });
