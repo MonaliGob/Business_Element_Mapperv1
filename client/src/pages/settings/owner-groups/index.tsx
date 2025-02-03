@@ -24,7 +24,6 @@ import {
   AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogCancel,
-  AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { OwnerGroupForm } from "@/components/settings/owner-group-form";
 import type { OwnerGroup } from "@db/schema";
@@ -45,13 +44,16 @@ export default function OwnerGroupsPage() {
         const error = await res.json();
         setDuplicateGroupName(data.name);
         setShowDuplicateAlert(true);
-        throw new Error(error.message || "Failed to create owner group");
+        return null;
       }
       return await res.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/owner-groups"] });
-      setOpen(false);
+    onSuccess: (data) => {
+      // Only close dialog and refresh data if creation was successful
+      if (data) {
+        queryClient.invalidateQueries({ queryKey: ["/api/owner-groups"] });
+        setOpen(false);
+      }
     },
   });
 
