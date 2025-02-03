@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
 import {
   Table,
   TableBody,
@@ -18,12 +17,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { OwnerGroupForm } from "@/components/settings/owner-group-form";
 import type { OwnerGroup } from "@db/schema";
 
 export default function OwnerGroupsPage() {
   const [open, setOpen] = useState(false);
-  const { toast } = useToast();
+  const [showDuplicateAlert, setShowDuplicateAlert] = useState(false);
+  const [duplicateGroupName, setDuplicateGroupName] = useState("");
+
   const { data: groups, isLoading } = useQuery<OwnerGroup[]>({ 
     queryKey: ["/api/owner-groups"] 
   });
@@ -33,6 +43,8 @@ export default function OwnerGroupsPage() {
       const res = await apiRequest("POST", "/api/owner-groups", data);
       if (!res.ok) {
         const error = await res.json();
+        setDuplicateGroupName(data.name);
+        setShowDuplicateAlert(true);
         throw new Error(error.message || "Failed to create owner group");
       }
       return await res.json();
@@ -40,18 +52,6 @@ export default function OwnerGroupsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/owner-groups"] });
       setOpen(false);
-      toast({
-        title: "Success",
-        description: "Owner group created successfully",
-      });
-    },
-    onError: (error: Error) => {
-      // Keep dialog open on error
-      toast({
-        title: "Owner Group Already Exists",
-        description: error.message,
-        variant: "destructive",
-      });
     },
   });
 
@@ -75,6 +75,23 @@ export default function OwnerGroupsPage() {
           </DialogContent>
         </Dialog>
       </div>
+
+      <AlertDialog open={showDuplicateAlert} onOpenChange={setShowDuplicateAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Duplicate Owner Group</AlertDialogTitle>
+            <AlertDialogDescription>
+              An owner group named "{duplicateGroupName}" already exists. 
+              Please choose a different name.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex justify-end space-x-2">
+            <AlertDialogCancel onClick={() => setShowDuplicateAlert(false)}>
+              OK
+            </AlertDialogCancel>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div className="bg-white rounded-lg border shadow">
         <Table>
