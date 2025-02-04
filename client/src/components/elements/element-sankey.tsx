@@ -12,18 +12,18 @@ type SankeyLink = {
   value: number;
 };
 
-// Pastel colors array
-const pastelColors = [
-  "#FFB3BA", // pastel pink
-  "#BAFFC9", // pastel green
-  "#BAE1FF", // pastel blue
-  "#FFFFBA", // pastel yellow
-  "#FFB3F7", // pastel purple
-  "#E0BBE4", // pastel lavender  
-  "#957DAD", // pastel violet
-  "#FEC8D8", // pastel salmon
-  "#D4F0F0", // pastel turquoise
-  "#FFDFD3"  // pastel peach
+// Professional blue-based color palette inspired by Citi's branding
+const corporateColors = [
+  "#002D72", // Citi deep blue
+  "#0057B8", // Bright blue
+  "#0077C8", // Medium blue
+  "#00A1DE", // Light blue
+  "#003087", // Navy blue
+  "#001F5B", // Dark blue
+  "#005587", // Steel blue
+  "#007BA7", // Ocean blue
+  "#00496D", // Slate blue
+  "#003D57"  // Deep slate blue
 ];
 
 export function ElementSankey() {
@@ -80,12 +80,12 @@ export function ElementSankey() {
           height={400}
           data={{ nodes, links }}
           node={{
-            fill: (nodeData) => pastelColors[nodeData.index % pastelColors.length],
+            fill: (nodeData) => corporateColors[nodeData.index % corporateColors.length],
           }}
           link={{
-            stroke: (linkData) => pastelColors[linkData.source % pastelColors.length],
+            stroke: (linkData) => corporateColors[linkData.source % corporateColors.length],
             strokeOpacity: 0.4,
-            fill: (linkData) => pastelColors[linkData.source % pastelColors.length],
+            fill: (linkData) => corporateColors[linkData.source % corporateColors.length],
             fillOpacity: 0.2,
           }}
           margin={{ top: 20, right: 160, bottom: 20, left: 160 }}
