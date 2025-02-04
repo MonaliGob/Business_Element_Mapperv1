@@ -13,6 +13,7 @@ import AdminPage from "@/pages/admin";
 import AuthPage from "@/pages/auth";
 import { AuthProvider } from "@/hooks/use-auth";
 import { Sidebar } from "@/components/layout/sidebar";
+import { Navigation } from "@/components/layout/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import React from "react";
 
@@ -40,21 +41,24 @@ function Router() {
   const { user } = useAuth();
 
   return (
-    <div className="flex">
-      {user && <Sidebar />}
-      <main className={user ? "flex-1" : "w-full"}>
-        <Switch>
-          <Route path="/auth" component={AuthPage} />
-          <ProtectedRoute path="/" component={Home} />
-          <ProtectedRoute path="/elements" component={ElementsPage} />
-          <ProtectedRoute path="/elements/:id" component={ElementPage} />
-          <ProtectedRoute path="/settings/databases" component={DatabasesPage} />
-          <ProtectedRoute path="/settings/categories" component={CategoriesPage} />
-          <ProtectedRoute path="/settings/owner-groups" component={OwnerGroupsPage} />
-          <ProtectedRoute path="/admin" component={AdminPage} />
-          <Route component={NotFound} />
-        </Switch>
-      </main>
+    <div className="flex flex-col min-h-screen">
+      {user && <Navigation />}
+      <div className="flex flex-1">
+        {user && <Sidebar />}
+        <main className={user ? "flex-1" : "w-full"}>
+          <Switch>
+            <Route path="/auth" component={AuthPage} />
+            <ProtectedRoute path="/" component={Home} />
+            <ProtectedRoute path="/elements" component={ElementsPage} />
+            <ProtectedRoute path="/elements/:id" component={ElementPage} />
+            <ProtectedRoute path="/settings/databases" component={DatabasesPage} />
+            <ProtectedRoute path="/settings/categories" component={CategoriesPage} />
+            <ProtectedRoute path="/settings/owner-groups" component={OwnerGroupsPage} />
+            <ProtectedRoute path="/admin" component={AdminPage} />
+            <Route component={NotFound} />
+          </Switch>
+        </main>
+      </div>
     </div>
   );
 }
