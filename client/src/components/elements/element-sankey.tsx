@@ -74,10 +74,10 @@ export function ElementSankey() {
   return (
     <div className="w-full h-[200px] mt-8">
       <h2 className="text-xl font-semibold mb-4">Element Mapping Flow</h2>
-      <div className="w-full h-full">
+      <div className="w-full h-full flex justify-center items-center">
         <Sankey
-          width={800}
-          height={200}
+          width={600}
+          height={160}
           data={{ nodes, links }}
           node={{
             fill: (nodeData) => corporateColors[nodeData.index % corporateColors.length],
@@ -88,7 +88,7 @@ export function ElementSankey() {
             fill: (linkData) => corporateColors[linkData.source % corporateColors.length],
             fillOpacity: 0.2,
           }}
-          margin={{ top: 20, right: 160, bottom: 20, left: 160 }}
+          margin={{ top: 10, right: 80, bottom: 10, left: 80 }}
           nodeWidth={10}
           nodePadding={60}
         >
