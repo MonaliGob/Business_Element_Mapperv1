@@ -12,6 +12,20 @@ type SankeyLink = {
   value: number;
 };
 
+// Pastel colors array
+const pastelColors = [
+  "#FFB3BA", // pastel pink
+  "#BAFFC9", // pastel green
+  "#BAE1FF", // pastel blue
+  "#FFFFBA", // pastel yellow
+  "#FFB3F7", // pastel purple
+  "#E0BBE4", // pastel lavender
+  "#957DAD", // pastel violet
+  "#FEC8D8", // pastel salmon
+  "#D4F0F0", // pastel turquoise
+  "#FFDFD3"  // pastel peach
+];
+
 export function ElementSankey() {
   const { data: elements = [] } = useQuery<BusinessElement[]>({
     queryKey: ["/api/elements"],
@@ -36,7 +50,7 @@ export function ElementSankey() {
       element.mappings.forEach((mapping) => {
         const targetName = `${mapping.databaseName}.${mapping.schemaName}.${mapping.tableName}`;
         let targetIndex = nodeMap.get(targetName);
-        
+
         if (targetIndex === undefined) {
           targetIndex = nodes.length;
           nodeMap.set(targetName, targetIndex);
@@ -66,14 +80,23 @@ export function ElementSankey() {
           height={400}
           data={{ nodes, links }}
           node={{
-            onClick: (event, index) => {
-              console.log("Clicked node:", nodes[index]);
+            colors: pastelColors,
+            onClick: (nodeData: any) => {
+              console.log("Clicked node:", nodeData);
             },
           }}
           link={{
-            stroke: "#1d4ed8",
-            strokeOpacity: 0.2,
-            fill: "#1d4ed8",
+            stroke: (linkData: any) => {
+              // Get source node's color for the link
+              const sourceColor = pastelColors[linkData.source % pastelColors.length];
+              return sourceColor;
+            },
+            strokeOpacity: 0.4,
+            fill: (linkData: any) => {
+              // Get source node's color for the link
+              const sourceColor = pastelColors[linkData.source % pastelColors.length];
+              return sourceColor;
+            },
             fillOpacity: 0.2,
           }}
           margin={{ top: 20, right: 160, bottom: 20, left: 160 }}
