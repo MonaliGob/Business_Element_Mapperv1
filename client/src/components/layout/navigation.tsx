@@ -12,9 +12,14 @@ export function Navigation() {
             <Link href="/">
               <a className="flex-shrink-0 flex items-center">
                 <img 
-                  src="/logo.webp" 
+                  src="https://bem-business-element-manager.breakable-play.repl.co/logo.webp" 
                   alt="BEM Logo" 
                   className="h-10 w-auto" 
+                  loading="eager"
+                  onError={(e) => {
+                    console.error('Logo failed to load:', e);
+                    e.currentTarget.src = '/logo.webp';
+                  }}
                 />
               </a>
             </Link>
