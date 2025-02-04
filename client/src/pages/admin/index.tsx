@@ -62,8 +62,13 @@ export default function AdminPage() {
   });
 
   const createProjectMutation = useMutation({
-    mutationFn: async (data: Omit<BusinessElement, "id">) => {
-      const res = await apiRequest("POST", "/api/elements", data);
+    mutationFn: async (data: Partial<BusinessElement>) => {
+      const projectData = {
+        ...data,
+        categoryId: 1, 
+        ownerGroupId: 1, 
+      };
+      const res = await apiRequest("POST", "/api/elements", projectData);
       return await res.json();
     },
     onSuccess: () => {
