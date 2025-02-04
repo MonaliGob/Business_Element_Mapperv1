@@ -12,18 +12,18 @@ type SankeyLink = {
   value: number;
 };
 
-// Professional blue-based color palette inspired by Citi's branding
+// Professional muted blue palette
 const corporateColors = [
-  "#002D72", // Citi deep blue
-  "#0057B8", // Bright blue
-  "#0077C8", // Medium blue
-  "#00A1DE", // Light blue
-  "#003087", // Navy blue
-  "#001F5B", // Dark blue
-  "#005587", // Steel blue
-  "#007BA7", // Ocean blue
-  "#00496D", // Slate blue
-  "#003D57"  // Deep slate blue
+  "#336B87", // Steel blue
+  "#2A3F54", // Dark navy
+  "#4682B4", // Classic steel blue
+  "#5F9EA0", // Cadet blue
+  "#4F6D7A", // Slate
+  "#7BA7BC", // Light steel blue
+  "#34495E", // Wet asphalt
+  "#5D8AA8", // Air force blue
+  "#4A708B", // Sky blue deep
+  "#4682B4"  // Steel blue alt
 ];
 
 export function ElementSankey() {
@@ -72,25 +72,32 @@ export function ElementSankey() {
   }
 
   return (
-    <div className="w-full h-[200px] mt-8">
+    <div className="flex flex-col w-full" style={{ height: "400px" }}>
       <h2 className="text-xl font-semibold mb-4">Element Mapping Flow</h2>
-      <div className="w-full h-full flex justify-center items-center">
+      <div className="flex-1">
         <Sankey
-          width={600}
-          height={160}
+          width={800}
+          height={350}
           data={{ nodes, links }}
           node={{
             fill: (nodeData) => corporateColors[nodeData.index % corporateColors.length],
+            opacity: 0.9,
           }}
           link={{
             stroke: (linkData) => corporateColors[linkData.source % corporateColors.length],
-            strokeOpacity: 0.4,
+            strokeOpacity: 0.2,
             fill: (linkData) => corporateColors[linkData.source % corporateColors.length],
-            fillOpacity: 0.2,
+            fillOpacity: 0.1,
           }}
-          margin={{ top: 10, right: 80, bottom: 10, left: 80 }}
-          nodeWidth={10}
-          nodePadding={60}
+          margin={{
+            top: 20,
+            right: 100,
+            bottom: 20,
+            left: 100,
+          }}
+          nodeWidth={20}
+          nodePadding={50}
+          iterations={64}
         >
           <Tooltip />
         </Sankey>
