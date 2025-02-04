@@ -9,6 +9,8 @@ import ElementPage from "@/pages/elements/[id]";
 import DatabasesPage from "@/pages/settings/databases";
 import CategoriesPage from "@/pages/settings/categories";
 import OwnerGroupsPage from "@/pages/settings/owner-groups";
+import AdminPage from "@/pages/admin";
+import { AuthProvider } from "@/hooks/use-auth";
 import { Sidebar } from "@/components/layout/sidebar";
 
 function Router() {
@@ -23,6 +25,7 @@ function Router() {
           <Route path="/settings/databases" component={DatabasesPage} />
           <Route path="/settings/categories" component={CategoriesPage} />
           <Route path="/settings/owner-groups" component={OwnerGroupsPage} />
+          <Route path="/admin" component={AdminPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
@@ -33,8 +36,10 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router />
-      <Toaster />
+      <AuthProvider>
+        <Router />
+        <Toaster />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

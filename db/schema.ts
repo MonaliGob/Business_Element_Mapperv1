@@ -3,6 +3,25 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
 
+// User and Role tables
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  isAdmin: boolean("is_admin").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const userProjects = pgTable("user_projects", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  elementId: integer("element_id").references(() => businessElements.id).notNull(),
+  role: text("role").notNull(), // viewer, editor, admin
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Existing tables...
 export const databaseConfigs = pgTable("database_configs", {
   id: serial("id").primaryKey(),
@@ -39,7 +58,6 @@ export const businessElements = pgTable("business_elements", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-// New table for data quality rules
 export const dataQualityRules = pgTable("data_quality_rules", {
   id: serial("id").primaryKey(),
   elementId: integer("element_id").references(() => businessElements.id).notNull(),
@@ -115,6 +133,23 @@ export const ruleRelations = relations(dataQualityRules, ({ one }) => ({
   }),
 }));
 
+// Add relations for users
+export const userRelations = relations(users, ({ many }) => ({
+  projects: many(userProjects),
+}));
+
+export const userProjectRelations = relations(userProjects, ({ one }) => ({
+  user: one(users, {
+    fields: [userProjects.userId],
+    references: [users.id],
+  }),
+  element: one(businessElements, {
+    fields: [userProjects.elementId],
+    references: [businessElements.id],
+  }),
+}));
+
+
 // Schemas
 export const insertDatabaseConfigSchema = createInsertSchema(databaseConfigs);
 export const selectDatabaseConfigSchema = createSelectSchema(databaseConfigs);
@@ -137,6 +172,17 @@ export const selectMappingSchema = createSelectSchema(databaseMappings);
 export const insertRuleSchema = createInsertSchema(dataQualityRules);
 export const selectRuleSchema = createSelectSchema(dataQualityRules);
 
+// Add schemas for users
+export const insertUserSchema = createInsertSchema(users, {
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  username: z.string().min(3, "Username must be at least 3 characters"),
+});
+
+export const selectUserSchema = createSelectSchema(users);
+
+export const insertUserProjectSchema = createInsertSchema(userProjects);
+export const selectUserProjectSchema = createSelectSchema(userProjects);
+
 // Types
 export type DatabaseConfig = typeof databaseConfigs.$inferSelect;
 export type NewDatabaseConfig = typeof databaseConfigs.$inferInsert;
@@ -158,3 +204,9 @@ export type NewDatabaseMapping = typeof databaseMappings.$inferInsert;
 
 export type DataQualityRule = typeof dataQualityRules.$inferSelect;
 export type NewDataQualityRule = typeof dataQualityRules.$inferInsert;
+
+// Types
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+export type UserProject = typeof userProjects.$inferSelect;
+export type NewUserProject = typeof userProjects.$inferInsert;

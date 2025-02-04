@@ -9,12 +9,55 @@ import {
   categories,
   ownerGroups,
   dataQualityRules,
+  userProjects,
+  users,
 } from "@db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { seedDatabase } from "./seed";
+import { setupAuth, requireAdmin } from "./auth";
 
 export function registerRoutes(app: Express): Server {
   const httpServer = createServer(app);
+
+  // Set up authentication
+  setupAuth(app);
+
+  // Admin routes for user management
+  app.get("/api/admin/users", requireAdmin, async (req, res) => {
+    const allUsers = await db.query.users.findMany({
+      with: {
+        projects: {
+          with: {
+            element: true,
+          },
+        },
+      },
+    });
+    res.json(allUsers);
+  });
+
+  // Project assignment routes
+  app.post("/api/admin/assign-project", requireAdmin, async (req, res) => {
+    const { userId, elementId, role } = req.body;
+
+    // Check if assignment already exists
+    const existing = await db.query.userProjects.findFirst({
+      where: and(
+        eq(userProjects.userId, userId),
+        eq(userProjects.elementId, elementId)
+      ),
+    });
+
+    if (existing) {
+      return res.status(400).json({ message: "User already assigned to this project" });
+    }
+
+    const assignment = await db.insert(userProjects)
+      .values({ userId, elementId, role })
+      .returning();
+
+    res.json(assignment[0]);
+  });
 
   // Database Configs
   app.get("/api/database-configs", async (req, res) => {
