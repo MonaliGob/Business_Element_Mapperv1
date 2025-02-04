@@ -16,13 +16,23 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { useAuth } from "@/hooks/use-auth";
 import React from "react";
 
-function ProtectedRoute({ component: Component, ...rest }: { component: React.ComponentType; path: string }) {
-  const { user } = useAuth();
+function ProtectedRoute({ 
+  component: Component,
+  path
+}: {
+  component: React.ComponentType;
+  path: string;
+}) {
   return (
-    <Route
-      {...rest}
-      component={() => (user ? <Component /> : <AuthPage />)}
-    />
+    <Route path={path}>
+      {() => {
+        const { user } = useAuth();
+        if (!user) {
+          return <AuthPage />;
+        }
+        return <Component />;
+      }}
+    </Route>
   );
 }
 
