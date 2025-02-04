@@ -19,7 +19,7 @@ const pastelColors = [
   "#BAE1FF", // pastel blue
   "#FFFFBA", // pastel yellow
   "#FFB3F7", // pastel purple
-  "#E0BBE4", // pastel lavender
+  "#E0BBE4", // pastel lavender  
   "#957DAD", // pastel violet
   "#FEC8D8", // pastel salmon
   "#D4F0F0", // pastel turquoise
@@ -80,23 +80,12 @@ export function ElementSankey() {
           height={400}
           data={{ nodes, links }}
           node={{
-            colors: pastelColors,
-            onClick: (nodeData: any) => {
-              console.log("Clicked node:", nodeData);
-            },
+            fill: (nodeData) => pastelColors[nodeData.index % pastelColors.length],
           }}
           link={{
-            stroke: (linkData: any) => {
-              // Get source node's color for the link
-              const sourceColor = pastelColors[linkData.source % pastelColors.length];
-              return sourceColor;
-            },
+            stroke: (linkData) => pastelColors[linkData.source % pastelColors.length],
             strokeOpacity: 0.4,
-            fill: (linkData: any) => {
-              // Get source node's color for the link
-              const sourceColor = pastelColors[linkData.source % pastelColors.length];
-              return sourceColor;
-            },
+            fill: (linkData) => pastelColors[linkData.source % pastelColors.length],
             fillOpacity: 0.2,
           }}
           margin={{ top: 20, right: 160, bottom: 20, left: 160 }}
